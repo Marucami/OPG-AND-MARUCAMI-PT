@@ -1,0 +1,19 @@
+{
+  "name": "opg-and-marucami-pt",
+  "version": "0.1.0",
+  "description": "2025 practice project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Marucami/OPG-AND-MARUCAMI-PT.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Marucami/OPG-AND-MARUCAMI-PT/issues"
+  },
+  "homepage": "https://github.com/Marucami/OPG-AND-MARUCAMI-PT#readme"
+}
