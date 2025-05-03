@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Marucami/OPG-AND-MARUCAMI-PT/issues"
   },
-  "homepage": "https://github.com/Marucami/OPG-AND-MARUCAMI-PT#readme"
+  "homepage": "https://github.com/Marucami/OPG-AND-MARUCAMI-PT#readme",
+  "devDependencies": {
+    "electron": "^36.1.0"
+  }
 }
