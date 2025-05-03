@@ -13,7 +13,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        name: 'Task Manager',
+        name: 'TaskManager',
         authors: 'OPG, Marucami',
         description: 'Task Manager App',
       },
