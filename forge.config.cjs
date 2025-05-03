@@ -1,6 +1,9 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
+// import FusesPlugin from '@electron-forge/plugin-fuses';
+// import { FuseV1Options, FuseVersion } from '@electron/fuses';
+
 module.exports = {
   packagerConfig: {
     asar: true,
@@ -9,11 +12,16 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        name: 'Task Manager',
+        authors: 'OPG, Marucami',
+        description: 'Task Manager App',
+      },
+      platforms: ['win32']
     },
     {
       name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
+      platforms: ['win32', 'darwin', 'linux'],
     },
     {
       name: '@electron-forge/maker-deb',
