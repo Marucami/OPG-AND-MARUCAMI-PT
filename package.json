@@ -2,8 +2,10 @@
   "name": "opg-and-marucami-pt",
   "version": "0.1.0",
   "description": "2025 practice project",
-  "main": "index.js",
+  "main": "main.js",
+  "type": "module",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

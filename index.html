@@ -22,7 +22,7 @@
                     <div class="task-column" id="draft">
                         <h2>Draft</h2>
                         <div class="task-list" id="draft-tasks"></div>
-                        <button onclick="addTask('draft')" class="btn">Add Task</button>
+                        <button id="addTask" class="btn">Add Task</button>
                     </div>
                     <div class="task-column" id="in-progress">
                         <h2>In Progress</h2>
@@ -41,95 +41,7 @@
         </div>
     </div>
 
-    <script>
-        const tasks = {
-            draft: [],
-            'in-progress': [],
-            editing: [],
-            done: []
-        };
-
-        function addTask(status) {
-            const taskText = prompt('Enter task description:');
-            if (taskText) {
-                const task = {
-                    id: Date.now(),
-                    text: taskText,
-                    status: status
-                };
-                tasks[status].push(task);
-                renderTasks();
-            }
-        }
-
-        function renderTasks() {
-            document.getElementById('draft-tasks').innerHTML = '';
-            document.getElementById('in-progress-tasks').innerHTML = '';
-            document.getElementById('editing-tasks').innerHTML = '';
-            document.getElementById('done-tasks').innerHTML = '';
-
-            tasks.draft.forEach(task => renderTask(task, 'draft'));
-            tasks['in-progress'].forEach(task => renderTask(task, 'in-progress'));
-            tasks.editing.forEach(task => renderTask(task, 'editing'));
-            tasks.done.forEach(task => renderTask(task, 'done'));
-        }
-
-        function renderTask(task, status) {
-            const taskElement = document.createElement('div');
-            taskElement.className = 'task';
-            let actions = `
-                <span class="task-text">${task.text}</span>
-                <div class="task-actions">
-                    <button onclick="editTask(${task.id}, '${status}')">Edit</button>
-                    <button onclick="deleteTask(${task.id}, '${status}')">Delete</button>
-            `;
-
-            if (status === 'draft') {
-                actions += `<button onclick="moveTask(${task.id}, '${status}', 'in-progress')">In Progress</button>`;
-            } else if (status === 'in-progress') {
-                actions += `<button onclick="moveTask(${task.id}, '${status}', 'editing')">Editing</button>`;
-            } else if (status === 'editing') {
-                actions += `<button onclick="moveTask(${task.id}, '${status}', 'done')">Done</button>
-                           <button onclick="moveTask(${task.id}, '${status}', 'in-progress')">Back to In Progress</button>`;
-            }
-
-            actions += `</div>`;
-            taskElement.innerHTML = actions;
-            document.getElementById(`${status}-tasks`).appendChild(taskElement);
-        }
-
-        function editTask(id, status) {
-            const task = tasks[status].find(t => t.id === id);
-            if (task) {
-                const newText = prompt('Edit task:', task.text);
-                if (newText !== null) {
-                    task.text = newText.trim();
-                    renderTasks();
-                }
-            }
-        }
-
-        function deleteTask(id, status) {
-            const index = tasks[status].findIndex(t => t.id === id);
-            if (index !== -1) {
-                tasks[status].splice(index, 1);
-                renderTasks();
-            }
-        }
-
-        function moveTask(id, fromStatus, toStatus) {
-            const index = tasks[fromStatus].findIndex(t => t.id === id);
-            if (index !== -1) {
-                const taskToMove = tasks[fromStatus][index];
-                tasks[fromStatus].splice(index, 1);
-                taskToMove.status = toStatus;
-                tasks[toStatus].push(taskToMove);
-                renderTasks();
-            }
-        }
-
-        renderTasks();
-    </script>
+    <script src="./index.js" type="module"></script>
 </body>
 
 </html>
