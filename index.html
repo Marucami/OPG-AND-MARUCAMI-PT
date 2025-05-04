@@ -41,6 +41,31 @@
         </div>
     </div>
 
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Create Task</h2>
+            <form id="taskForm">
+                <label for="taskName">Task Name:</label>
+                <input type="text" id="taskName" name="taskName" required>
+                <label for="taskDescription">Task Description:</label>
+                <input type="text" id="taskDescription" name="taskDescription" required>
+                <label for="taskStartDate">Start Date:</label>
+                <input type="date" id="taskStartDate" name="taskStartDate" required>
+                <label for="taskDeadline">Deadline:</label>
+                <input type="date" id="taskDeadline" name="taskDeadline" required>
+                <label for="taskStatus">Status:</label>
+                <select id="taskStatus" name="taskStatus" required>
+                    <option value="draft">Draft</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="editing">Editing</option>
+                    <option value="done">Done</option>
+                </select>
+                <button type="submit" class="btn">Create Task</button>
+            </form>
+        </div>
+    </div>
+
     <script src="./index.js" type="module"></script>
 </body>
 

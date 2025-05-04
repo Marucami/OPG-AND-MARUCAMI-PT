@@ -5,18 +5,21 @@ const tasks = {
     done: []
 };
 
-function addTask(status) {
-    // const taskText = prompt('Enter task description:');
-    const taskText = 'Test Task'
-    if (taskText) {
+function addTask(status, name, description, startDate, deadline) {
+    if (name) {
         const task = {
             id: Date.now(),
-            text: taskText,
+            name: name,
+            description: description,
+            startDate: startDate,
+            deadline: deadline,
             status: status
         };
         tasks[status].push(task);
         renderTasks();
+        return true;
     }
+    return false;
 }
 
 function renderTasks() {
@@ -31,58 +34,42 @@ function renderTasks() {
     tasks.done.forEach(task => renderTask(task, 'done'));
 }
 
-function renderTaskOld(task, status) { //Эта функция нигде не вызывается, я её переименовал, после можно будет её удалить, на её замену функция ниже renderTask()
-    const taskElement = document.createElement('div');
-    taskElement.className = 'task';
-    let actions = `
-        <span class="task-text">${task.text}</span>
-        <div class="task-actions">
-            <button onclick="editTask(${task.id}, '${status}')">Edit</button>
-            <button onclick="deleteTask(${task.id}, '${status}')">Delete</button>
-    `;
-
-    if (status === 'draft') {
-        actions += `<button onclick="moveTask(${task.id}, '${status}', 'in-progress')">In Progress</button>`;
-    } else if (status === 'in-progress') {
-        actions += `<button onclick="moveTask(${task.id}, '${status}', 'editing')">Editing</button>`;
-    } else if (status === 'editing') {
-        actions += `<button onclick="moveTask(${task.id}, '${status}', 'done')">Done</button>
-                   <button onclick="moveTask(${task.id}, '${status}', 'in-progress')">Back to In Progress</button>`;
-    }
-
-    actions += `</div>`;
-    taskElement.innerHTML = actions;
-    document.getElementById(`${status}-tasks`).appendChild(taskElement);
-}
-
 function renderTask(task, status) {
     const taskElement = document.createElement('div');
     taskElement.classList.add('task');
 
-    //<span class="task-text">${task.text}</span>
-    const taskText = document.createElement('span');
-    taskText.classList.add('task-text');
-    taskText.innerText = task.text;
+    const taskName = document.createElement('h3');
+    taskName.classList.add('task-name');
+    taskName.innerText = task.name;
 
-    //<div class="task-actions">
+    const taskDescription = document.createElement('p');
+    taskDescription.classList.add('task-description');
+    taskDescription.innerText = task.description;
+
+    const taskStartDate = document.createElement('p');
+    taskStartDate.classList.add('task-start-date');
+    taskStartDate.innerText = `Start Date: ${task.startDate}`;
+
+    const taskDeadline = document.createElement('p');
+    taskDeadline.classList.add('task-deadline');
+    taskDeadline.innerText = `Deadline: ${task.deadline}`;
+
     const taskActions = document.createElement('div');
     taskActions.classList.add('task-actions');
 
-    //<button onclick="editTask(${task.id}, '${status}')">Edit</button>
     const editTaskButton = document.createElement('button');
-    editTaskButton.innerText = 'Edit'
+    editTaskButton.innerText = 'Edit';
     editTaskButton.addEventListener('click', (e) => {
-        e.preventDefault;
+        e.preventDefault();
         editTask(task.id, status);
-    })
+    });
 
-    //<button onclick="deleteTask(${task.id}, '${status}')">Delete</button>
     const deleteTaskButton = document.createElement('button');
-    deleteTaskButton.innerText = 'Delete'
+    deleteTaskButton.innerText = 'Delete';
     deleteTaskButton.addEventListener('click', (e) => {
-        e.preventDefault;
+        e.preventDefault();
         deleteTask(task.id, status);
-    })
+    });
 
     taskActions.append(editTaskButton, deleteTaskButton);
 
@@ -91,51 +78,55 @@ function renderTask(task, status) {
         backButton.innerText = 'Back to In Progress';
         backButton.addEventListener('click', (e) => {
             e.preventDefault();
-            moveTask(task.id, status, 'in-progress')
-        })
+            moveTask(task.id, status, 'in-progress');
+        });
         taskActions.append(backButton);
     }
 
     if (status !== 'done') {
         const moveTaskButton = document.createElement('button');
-        switch(status) {
+        switch (status) {
             case 'draft':
-                moveTaskButton.innerText = 'In Progress'
+                moveTaskButton.innerText = 'In Progress';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'in-progress')
-                })
+                    moveTask(task.id, status, 'in-progress');
+                });
                 break;
             case 'in-progress':
-                moveTaskButton.innerText = 'Editing'
+                moveTaskButton.innerText = 'Editing';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'editing')
-                })
+                    moveTask(task.id, status, 'editing');
+                });
                 break;
             case 'editing':
-                moveTaskButton.innerText = 'Done'
+                moveTaskButton.innerText = 'Done';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'done')
-                })
+                    moveTask(task.id, status, 'done');
+                });
                 break;
         }
-        taskActions.append(moveTaskButton)
+        taskActions.append(moveTaskButton);
     }
 
-    taskElement.append(taskText)
-    taskElement.append(taskActions);
+    taskElement.append(taskName, taskDescription, taskStartDate, taskDeadline, taskActions);
     document.getElementById(`${status}-tasks`).appendChild(taskElement);
 }
 
 function editTask(id, status) {
     const task = tasks[status].find(t => t.id === id);
     if (task) {
-        //const newText = prompt('Edit task:', task.text);
-        const newText = 'Edited Task'
-        if (newText !== null) {
-            task.text = newText.trim();
+        const newName = prompt('Edit task name:', task.name);
+        const newDescription = prompt('Edit task description:', task.description);
+        const newStartDate = prompt('Edit start date:', task.startDate);
+        const newDeadline = prompt('Edit deadline:', task.deadline);
+        if (newName !== null && newDescription !== null && newStartDate !== null && newDeadline !== null) {
+            task.name = newName.trim();
+            task.description = newDescription.trim();
+            task.startDate = newStartDate.trim();
+            task.deadline = newDeadline.trim();
             renderTasks();
         }
     }
@@ -160,11 +151,28 @@ function moveTask(id, fromStatus, toStatus) {
     }
 }
 
-const addTaskButton = document.getElementById('addTask');
+function openModal() {
+    document.getElementById('taskModal').style.display = 'block';
+}
 
-addTaskButton.addEventListener('click', (e) => {
+function closeModal() {
+    document.getElementById('taskModal').style.display = 'none';
+}
+
+document.getElementById('addTask').addEventListener('click', openModal);
+
+document.getElementById('taskForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    addTask('draft')
-})
+    const name = document.getElementById('taskName').value;
+    const description = document.getElementById('taskDescription').value;
+    const startDate = document.getElementById('taskStartDate').value;
+    const deadline = document.getElementById('taskDeadline').value;
+    const status = document.getElementById('taskStatus').value;
+
+    if (addTask(status, name, description, startDate, deadline)) {
+        e.target.reset();
+        closeModal();
+    }
+});
 
 renderTasks();
