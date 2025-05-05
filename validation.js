@@ -1,5 +1,3 @@
-// validation.js
-
 function validateTaskName(name, tasks) {
     if (!name) {
         return 'Task name is required.';
