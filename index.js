@@ -1,3 +1,7 @@
+import addTaskDB from "./addTask.js";
+import updateTaskDB from "./updateTask.js";
+import changeStatusDB from "./changeStatus.js";
+import deleteTaskDB from "./deleteTask.js";
 const tasks = {
     draft: [],
     'in-progress': [],
@@ -8,7 +12,7 @@ const tasks = {
 function addTask(status, name, description, startDate, deadline) {
     if (name) {
         const task = {
-            id: Date.now(),
+            id: addTaskDB(name, description, status, startDate, deadline),
             name: name,
             description: description,
             startDate: startDate,
@@ -17,9 +21,8 @@ function addTask(status, name, description, startDate, deadline) {
         };
         tasks[status].push(task);
         renderTasks();
-        return true;
     }
-    return false;
+
 }
 
 function renderTasks() {
