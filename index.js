@@ -93,6 +93,7 @@ function renderTask(task, status) {
     taskActions.classList.add('task-actions');
 
     const editTaskButton = document.createElement('button');
+    editTaskButton.classList.add('btn');
     editTaskButton.innerText = 'Edit';
     editTaskButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -101,6 +102,7 @@ function renderTask(task, status) {
 
     const deleteTaskButton = document.createElement('button');
     deleteTaskButton.innerText = 'Delete';
+    deleteTaskButton.classList.add('btn');
     deleteTaskButton.addEventListener('click', async (e) => {
         e.preventDefault();
         await deleteTask(task.id);
@@ -111,6 +113,7 @@ function renderTask(task, status) {
     if (status === 'editing') {
         const backButton = document.createElement('button');
         backButton.innerText = 'Back to In Progress';
+        backButton.classList.add('btn');
         backButton.addEventListener('click', (e) => {
             e.preventDefault();
             moveTask(task.id, status, 'in-progress');
@@ -120,6 +123,7 @@ function renderTask(task, status) {
 
     if (status !== 'done') {
         const moveTaskButton = document.createElement('button');
+        moveTaskButton.classList.add('btn');
         switch (status) {
             case 'draft':
                 moveTaskButton.innerText = 'In Progress';
