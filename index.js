@@ -54,6 +54,51 @@ async function addTask(status, name, description, startDate, deadline) {
 
 }
 
+const editTaskModal = document.getElementById('editTaskModal');
+const closeEditModal = document.getElementById('closeEditModal');
+const editTaskForm = document.getElementById('editTaskForm');
+
+let currentEditTaskId = null;
+let currentEditTaskStatus = null;
+
+function openEditTaskModal(task) {
+    currentEditTaskId = task.id;
+    currentEditTaskStatus = task.status;
+
+    document.getElementById('editTaskName').value = task.name;
+    document.getElementById('editTaskDescription').value = task.description;
+    document.getElementById('editTaskStartDate').value = task.startDate;
+    document.getElementById('editTaskDeadline').value = task.deadline;
+
+    editTaskModal.style.display = 'block';
+}
+
+closeEditModal.addEventListener('click', () => {
+    editTaskModal.style.display = 'none';
+});
+
+
+editTaskForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const updatedTask = {
+        name: document.getElementById('editTaskName').value.trim(),
+        description: document.getElementById('editTaskDescription').value.trim(),
+        startDate: document.getElementById('editTaskStartDate').value,
+        deadline: document.getElementById('editTaskDeadline').value,
+        status: currentEditTaskStatus
+    };
+
+    const result = await window.electronAPI.updateTask(currentEditTaskId, updatedTask);
+    if (!result.success) {
+        console.error('Ошибка при обновлении задачи:', result.error);
+    } else {
+        console.log('Задача успешно обновлена');
+    }
+
+    editTaskModal.style.display = 'none';
+    renderTasks();
+});
+
 async function renderTasks() {
     await getTasks();
 
@@ -97,7 +142,7 @@ function renderTask(task, status) {
     editTaskButton.innerText = 'Edit';
     editTaskButton.addEventListener('click', (e) => {
         e.preventDefault();
-        editTask(task.id, status);
+        openEditTaskModal(task);
     });
 
     const deleteTaskButton = document.createElement('button');
@@ -136,7 +181,7 @@ function renderTask(task, status) {
                 moveTaskButton.innerText = 'Editing';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id,'editing');
+                    moveTask(task.id, 'editing');
                 });
                 break;
             case 'editing':
@@ -187,7 +232,7 @@ async function editTask(id, status) {
     const description = 'edited description'
     const startDate = '1998-01-01'
     const deadline = '2026-01-01'
-    
+
 
     const task = {
         name: name,

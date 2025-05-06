@@ -329,6 +329,7 @@ select {
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     transition: border-color 0.2s ease;
+    resize: none
 }
 
 input:focus,
@@ -339,8 +340,16 @@ select:focus {
 }
 
 #taskName,
-#taskDescription {
+#taskDescription,
+#editTaskName,
+#editTaskStartDate,
+#editTaskDeadline,
+#editTaskDescription {
     width: 475px;
+}
+
+#editTaskDescription {
+    height: 150px;
 }
 
 #taskStartDate,
