@@ -66,6 +66,57 @@ function setupDatabaseHandlers() {
       });
     });
   });
+  ipcMain.handle('update-task-status', async (_, { id, newStatus }) => {
+    return new Promise((resolve) => {
+      db.run(
+        "UPDATE tasks SET status = ? WHERE id = ?",
+        [newStatus, id],
+        function(err) {
+          if (err) {
+            resolve({ success: false, error: err.message });
+          } else {
+            resolve({ 
+              success: true,
+              updated: this.changes > 0,
+              changes: this.changes
+            });
+          }
+        }
+      );
+    });
+  });
+  ipcMain.handle('update-task', async (_, { id, taskData }) => {
+    return new Promise((resolve) => {
+      db.run(
+        `UPDATE tasks SET 
+          name = COALESCE(?, name),
+          description = COALESCE(?, description),
+          status = COALESCE(?, status),
+          start_date = COALESCE(?, start_date),
+          deadline = COALESCE(?, deadline)
+         WHERE id = ?`,
+        [
+          taskData.name,
+          taskData.description,
+          taskData.status,
+          taskData.startDate,
+          taskData.deadline,
+          id
+        ],
+        function(err) {
+          if (err) {
+            resolve({ success: false, error: err.message });
+          } else {
+            resolve({ 
+              success: true,
+              updated: this.changes > 0,
+              changes: this.changes
+            });
+          }
+        }
+      );
+    });
+  });
 }
 
 app.whenReady().then(() => {

@@ -93,6 +93,7 @@ function renderTask(task, status) {
     taskActions.classList.add('task-actions');
 
     const editTaskButton = document.createElement('button');
+    editTaskButton.classList.add('btn');
     editTaskButton.innerText = 'Edit';
     editTaskButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -101,6 +102,7 @@ function renderTask(task, status) {
 
     const deleteTaskButton = document.createElement('button');
     deleteTaskButton.innerText = 'Delete';
+    deleteTaskButton.classList.add('btn');
     deleteTaskButton.addEventListener('click', async (e) => {
         e.preventDefault();
         await deleteTask(task.id);
@@ -111,35 +113,37 @@ function renderTask(task, status) {
     if (status === 'editing') {
         const backButton = document.createElement('button');
         backButton.innerText = 'Back to In Progress';
+        backButton.classList.add('btn');
         backButton.addEventListener('click', (e) => {
             e.preventDefault();
-            moveTask(task.id, status, 'in-progress');
+            moveTask(task.id, 'in-progress');
         });
         taskActions.append(backButton);
     }
 
     if (status !== 'done') {
         const moveTaskButton = document.createElement('button');
+        moveTaskButton.classList.add('btn');
         switch (status) {
             case 'draft':
                 moveTaskButton.innerText = 'In Progress';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'in-progress');
+                    moveTask(task.id, 'in-progress');
                 });
                 break;
             case 'in-progress':
                 moveTaskButton.innerText = 'Editing';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'editing');
+                    moveTask(task.id,'editing');
                 });
                 break;
             case 'editing':
                 moveTaskButton.innerText = 'Done';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'done');
+                    moveTask(task.id, 'done');
                 });
                 break;
         }
@@ -151,49 +155,66 @@ function renderTask(task, status) {
 }
 
 async function editTask(id, status) {
-    const task = tasks[status].find(t => t.id === id);
-    if (!task) return;
-    const { value: formValues } = await dialog.showMessageBox({
-        type: 'question',
-        buttons: ['Save', 'Cancel'],
-        title: 'Edit Task',
-        message: 'Edit task details:',
-        detail: 'Enter the new task information:',
-        inputs: [
-            { label: 'Name', value: task.name },
-            { label: 'Description', value: task.description },
-            { label: 'Start Date', value: task.startDate },
-            { label: 'Deadline', value: task.deadline }
-        ],
-        cancelId: 1
-    });
+    // const task = tasks[status].find(t => t.id === id);
+    // if (!task) return;
+    // const { value: formValues } = await dialog.showMessageBox({
+    //     type: 'question',
+    //     buttons: ['Save', 'Cancel'],
+    //     title: 'Edit Task',
+    //     message: 'Edit task details:',
+    //     detail: 'Enter the new task information:',
+    //     inputs: [
+    //         { label: 'Name', value: task.name },
+    //         { label: 'Description', value: task.description },
+    //         { label: 'Start Date', value: task.startDate },
+    //         { label: 'Deadline', value: task.deadline }
+    //     ],
+    //     cancelId: 1
+    // });
 
-    if (formValues !== undefined) {
-        const [newName, newDescription, newStartDate, newDeadline] = formValues;
-        if (newName && newDescription && newStartDate && newDeadline) {
-            task.name = newName.trim();
-            task.description = newDescription.trim();
-            task.startDate = newStartDate.trim();
-            task.deadline = newDeadline.trim();
-            renderTasks();
-        }
+    // if (formValues !== undefined) {
+    //     const [newName, newDescription, newStartDate, newDeadline] = formValues;
+    //     if (newName && newDescription && newStartDate && newDeadline) {
+    //         task.name = newName.trim();
+    //         task.description = newDescription.trim();
+    //         task.startDate = newStartDate.trim();
+    //         task.deadline = newDeadline.trim();
+    //         renderTasks();
+    //     }
+    // }
+
+    const name = 'edited name';
+    const description = 'edited description'
+    const startDate = '1998-01-01'
+    const deadline = '2026-01-01'
+    
+
+    const task = {
+        name: name,
+        description: description,
+        startDate: startDate,
+        deadline: deadline,
+        status: status
+    };
+
+    const result = await window.electronAPI.updateTask(id, task);
+    if (!result.success) {
+        console.error('Ошибка', result.error);
+    } else {
+        console.log('Успешно обновлено')
     }
-}
 
-async function deleteTask(id) {
-    window.electronAPI.deleteTask(id);
     renderTasks();
 }
 
-function moveTask(id, fromStatus, toStatus) {
-    const index = tasks[fromStatus].findIndex(t => t.id === id);
-    if (index !== -1) {
-        const taskToMove = tasks[fromStatus][index];
-        tasks[fromStatus].splice(index, 1);
-        taskToMove.status = toStatus;
-        tasks[toStatus].push(taskToMove);
-        renderTasks();
-    }
+async function deleteTask(id) {
+    await window.electronAPI.deleteTask(id);
+    renderTasks();
+}
+
+async function moveTask(id, status) {
+    await window.electronAPI.updateTaskStatus(id, status);
+    renderTasks();
 }
 
 window.openModal = function () {
