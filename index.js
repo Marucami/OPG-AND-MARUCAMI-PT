@@ -150,14 +150,27 @@ function renderTask(task, status) {
     document.getElementById(`${status}-tasks`).appendChild(taskElement);
 }
 
-function editTask(id, status) {
+async function editTask(id, status) {
     const task = tasks[status].find(t => t.id === id);
-    if (task) {
-        const newName = prompt('Edit task name:', task.name);
-        const newDescription = prompt('Edit task description:', task.description);
-        const newStartDate = prompt('Edit start date:', task.startDate);
-        const newDeadline = prompt('Edit deadline:', task.deadline);
-        if (newName !== null && newDescription !== null && newStartDate !== null && newDeadline !== null) {
+    if (!task) return;
+    const { value: formValues } = await dialog.showMessageBox({
+        type: 'question',
+        buttons: ['Save', 'Cancel'],
+        title: 'Edit Task',
+        message: 'Edit task details:',
+        detail: 'Enter the new task information:',
+        inputs: [
+            { label: 'Name', value: task.name },
+            { label: 'Description', value: task.description },
+            { label: 'Start Date', value: task.startDate },
+            { label: 'Deadline', value: task.deadline }
+        ],
+        cancelId: 1
+    });
+
+    if (formValues !== undefined) {
+        const [newName, newDescription, newStartDate, newDeadline] = formValues;
+        if (newName && newDescription && newStartDate && newDeadline) {
             task.name = newName.trim();
             task.description = newDescription.trim();
             task.startDate = newStartDate.trim();
@@ -183,13 +196,13 @@ function moveTask(id, fromStatus, toStatus) {
     }
 }
 
-function openModal() {
+window.openModal = function () {
     document.getElementById('taskModal').style.display = 'block';
-}
+};
 
-function closeModal() {
+window.closeModal = function () {
     document.getElementById('taskModal').style.display = 'none';
-}
+};
 
 document.getElementById('addTask').addEventListener('click', openModal);
 

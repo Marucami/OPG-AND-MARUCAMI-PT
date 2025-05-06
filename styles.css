@@ -109,7 +109,7 @@ header h1 svg {
 }
 
 .task-column {
-    flex: 1 1 auto;
+    flex: 1;
     min-width: 200px;
     max-width: 100%;
     background-color: var(--surface-light);
