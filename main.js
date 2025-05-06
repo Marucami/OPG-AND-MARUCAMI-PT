@@ -2,14 +2,16 @@ import { app, BrowserWindow, ipcMain } from "electron"
 import { fileURLToPath } from 'url';
 import path from "path"
 import { db, getDbPath } from "./database.js";
+import os from "os";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 1600,
-    height: 720,
+    width: 1740,
+    height: 960,
+    icon: path.join(__dirname, 'icons/icon.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -18,7 +20,7 @@ const createWindow = () => {
     }
   })
 
-  // win.removeMenu()
+  win.removeMenu()
 
   win.loadFile('index.html')
 }
@@ -116,6 +118,9 @@ function setupDatabaseHandlers() {
         }
       );
     });
+  });
+  ipcMain.handle('get-computer-name', () => {
+    return os.hostname();
   });
 }
 

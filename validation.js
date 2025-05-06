@@ -1,66 +1,67 @@
-function validateTaskName(name, tasks) {
-    if (!name) {
-        return 'Task name is required.';
-    }
+const submitButton = document.getElementById
 
-    const allTasks = [...tasks.draft, ...tasks['in-progress'], ...tasks.editing, ...tasks.done];
-    if (allTasks.some(task => task.name === name)) {
-        return 'Task with this name already exists.';
+export function submitValidation(taskValidation, submitButton) {
+    const isValid = Object.values(taskValidation).every((value) => value === true);
+    if (!isValid) {
+        submitButton.disabled = true;
+    } else {
+        submitButton.disabled = false;
     }
-
-    return null;
 }
 
-function validateTaskDescription(description) {
-    if (!description) {
-        return 'Task description is required.';
-    }
-    return null;
+export function resetAddTaskValidation() {
+    const taskName = document.getElementById("taskName");
+    const taskStatus = document.getElementById("taskStatus");
+    const taskDescription = document.getElementById("taskDescription");
+    const taskStartDate = document.getElementById("taskStartDate");
+    const taskDeadline = document.getElementById("taskDeadline");
+    const inputs = [taskName, taskStatus, taskDescription, taskStartDate, taskDeadline]
+    inputs.forEach((input) => {
+        input.classList.remove("error");
+        input.classList.remove("valid");
+    })
 }
 
-function validateTaskDates(startDate, deadline) {
-    if (!startDate) {
-        return 'Start date is required.';
+export function validateTextInput(input) {
+    if (!input.value) {
+        input.classList.add('error');
+        input.classList.remove('valid');
+        return false;
+    } else {
+        input.classList.remove('error');
+        input.classList.add('valid');
+        return true;
     }
-
-    if (!deadline) {
-        return 'Deadline is required.';
-    }
-
-    if (new Date(startDate) > new Date(deadline)) {
-        return 'Start date cannot be after the deadline.';
-    }
-
-    return null;
 }
 
-function validateForm(tasks) {
-    const name = document.getElementById('taskName').value.trim();
-    const description = document.getElementById('taskDescription').value.trim();
-    const startDate = document.getElementById('taskStartDate').value;
-    const deadline = document.getElementById('taskDeadline').value;
-
-    const nameError = validateTaskName(name, tasks);
-    if (nameError) {
-        return nameError;
+export function validateTaskStatus(taskStatus) {
+    if (taskStatus.value === "none") {
+        taskStatus.classList.add('error');
+        taskStatus.classList.remove('valid');
+        return false;
+    } else {
+        taskStatus.classList.remove('error');
+        taskStatus.classList.add('valid');
+        return true;
     }
-
-    const descriptionError = validateTaskDescription(description);
-    if (descriptionError) {
-        return descriptionError;
-    }
-
-    const datesError = validateTaskDates(startDate, deadline);
-    if (datesError) {
-        return datesError;
-    }
-
-    return null;
 }
 
-module.exports = {
-    validateTaskName,
-    validateTaskDescription,
-    validateTaskDates,
-    validateForm
-};
+export function validateTaskDates(taskStartDate, taskDeadline) {
+    const start = taskStartDate.value;
+    const deadline = taskDeadline.value;
+    const startDate = new Date(start);
+    const deadlineDate = new Date(deadline);
+    if (!start || !deadline || startDate > deadlineDate || startDate.getFullYear() < 1900 || startDate.getFullYear() > 2100 || deadlineDate.getFullYear() < 1900 || deadlineDate.getFullYear() > 2100) {
+        taskStartDate.classList.add('error');
+        taskStartDate.classList.remove('valid');
+        taskDeadline.classList.add('error');
+        taskDeadline.classList.remove('valid');
+        return false;
+    } else {
+        taskStartDate.classList.remove('error');
+        taskStartDate.classList.add('valid');
+        taskDeadline.classList.remove('error');
+        taskDeadline.classList.add('valid');
+        return true;
+    }
+}

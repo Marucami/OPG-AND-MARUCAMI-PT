@@ -1,7 +1,9 @@
-// import addTaskDB from "./addTask.js";
-// import updateTaskDB from "./updateTask.js";
-// import changeStatusDB from "./changeStatus.js";
-// import deleteTaskDB from "./deleteTask.js";
+import { resetAddTaskValidation, submitValidation, validateTaskDates, validateTaskStatus, validateTextInput } from "./validation.js";
+
+async function changeUsername() {
+    const usernameField = document.querySelector('.username');
+    usernameField.innerText = await window.electronAPI.getComputerName();
+}
 
 const tasks = {
     draft: [],
@@ -17,8 +19,6 @@ async function getTasks() {
         return {};
     }
 
-    console.log(newTasks);
-
     tasks.draft = [];
     tasks['in-progress'] = [];
     tasks.editing = [];
@@ -27,7 +27,6 @@ async function getTasks() {
     newTasks.forEach((task) => {
         tasks[task.status].push(task);
     })
-    console.log(tasks);
 }
 
 async function addTask(status, name, description, startDate, deadline) {
@@ -42,62 +41,15 @@ async function addTask(status, name, description, startDate, deadline) {
         const result = await window.electronAPI.addTask(task);
         if (result.success) {
             console.log(`Задача добавлена с ID: ${result.id}`);
-            // loadTasks();
         } else {
             console.log(`Ошибка: ${result.error}`);
             return false;
         }
-        // tasks[status].push(task);
         renderTasks();
         return true;
     }
 
 }
-
-const editTaskModal = document.getElementById('editTaskModal');
-const closeEditModal = document.getElementById('closeEditModal');
-const editTaskForm = document.getElementById('editTaskForm');
-
-let currentEditTaskId = null;
-let currentEditTaskStatus = null;
-
-function openEditTaskModal(task) {
-    currentEditTaskId = task.id;
-    currentEditTaskStatus = task.status;
-
-    document.getElementById('editTaskName').value = task.name;
-    document.getElementById('editTaskDescription').value = task.description;
-    document.getElementById('editTaskStartDate').value = task.startDate;
-    document.getElementById('editTaskDeadline').value = task.deadline;
-
-    editTaskModal.style.display = 'block';
-}
-
-closeEditModal.addEventListener('click', () => {
-    editTaskModal.style.display = 'none';
-});
-
-
-editTaskForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const updatedTask = {
-        name: document.getElementById('editTaskName').value.trim(),
-        description: document.getElementById('editTaskDescription').value.trim(),
-        startDate: document.getElementById('editTaskStartDate').value,
-        deadline: document.getElementById('editTaskDeadline').value,
-        status: currentEditTaskStatus
-    };
-
-    const result = await window.electronAPI.updateTask(currentEditTaskId, updatedTask);
-    if (!result.success) {
-        console.error('Ошибка при обновлении задачи:', result.error);
-    } else {
-        console.log('Задача успешно обновлена');
-    }
-
-    editTaskModal.style.display = 'none';
-    renderTasks();
-});
 
 async function renderTasks() {
     await getTasks();
@@ -199,59 +151,6 @@ function renderTask(task, status) {
     document.getElementById(`${status}-tasks`).appendChild(taskElement);
 }
 
-async function editTask(id, status) {
-    // const task = tasks[status].find(t => t.id === id);
-    // if (!task) return;
-    // const { value: formValues } = await dialog.showMessageBox({
-    //     type: 'question',
-    //     buttons: ['Save', 'Cancel'],
-    //     title: 'Edit Task',
-    //     message: 'Edit task details:',
-    //     detail: 'Enter the new task information:',
-    //     inputs: [
-    //         { label: 'Name', value: task.name },
-    //         { label: 'Description', value: task.description },
-    //         { label: 'Start Date', value: task.startDate },
-    //         { label: 'Deadline', value: task.deadline }
-    //     ],
-    //     cancelId: 1
-    // });
-
-    // if (formValues !== undefined) {
-    //     const [newName, newDescription, newStartDate, newDeadline] = formValues;
-    //     if (newName && newDescription && newStartDate && newDeadline) {
-    //         task.name = newName.trim();
-    //         task.description = newDescription.trim();
-    //         task.startDate = newStartDate.trim();
-    //         task.deadline = newDeadline.trim();
-    //         renderTasks();
-    //     }
-    // }
-
-    const name = 'edited name';
-    const description = 'edited description'
-    const startDate = '1998-01-01'
-    const deadline = '2026-01-01'
-
-
-    const task = {
-        name: name,
-        description: description,
-        startDate: startDate,
-        deadline: deadline,
-        status: status
-    };
-
-    const result = await window.electronAPI.updateTask(id, task);
-    if (!result.success) {
-        console.error('Ошибка', result.error);
-    } else {
-        console.log('Успешно обновлено')
-    }
-
-    renderTasks();
-}
-
 async function deleteTask(id) {
     await window.electronAPI.deleteTask(id);
     renderTasks();
@@ -262,28 +161,160 @@ async function moveTask(id, status) {
     renderTasks();
 }
 
-window.openModal = function () {
+function openModal() {
     document.getElementById('taskModal').style.display = 'block';
 };
 
-window.closeModal = function () {
+function closeModal() {
     document.getElementById('taskModal').style.display = 'none';
+    resetAddTaskValidation();
+    document.getElementById('taskForm').reset();
 };
 
 document.getElementById('addTask').addEventListener('click', openModal);
 
+document.getElementById('closeModal').addEventListener('click', closeModal);
+
 document.getElementById('taskForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    const name = document.getElementById('taskName').value;
-    const description = document.getElementById('taskDescription').value;
-    const startDate = document.getElementById('taskStartDate').value;
-    const deadline = document.getElementById('taskDeadline').value;
-    const status = document.getElementById('taskStatus').value;
+    const data = new FormData(e.target);
+    const name = data.get("taskName")
+    const description = data.get("taskDescription")
+    const startDate = data.get("taskStartDate")
+    const deadline = data.get("taskDeadline")
+    const status = data.get("taskStatus")
 
     if (addTask(status, name, description, startDate, deadline)) {
         e.target.reset();
+        resetAddTaskValidation();
         closeModal();
     }
 });
 
+const addTaskValidation = {
+    taskName: false,
+    taskStartDate: false,
+    taskDeadline: false,
+    taskStatus: false,
+    taskDescription: false
+}
+
+const submitAddTask = document.getElementById("taskSubmit");
+
+document.getElementById("taskName").addEventListener('input', (e) => {
+    addTaskValidation.taskName = validateTextInput(e.target);
+    submitValidation(addTaskValidation, submitAddTask);
+})
+
+const addTaskStartDateInput = document.getElementById("taskStartDate");
+const addTaskDeadlineInput = document.getElementById("taskDeadline");
+
+addTaskStartDateInput.addEventListener('input', () => {
+    addTaskValidation.taskStartDate = validateTaskDates(addTaskStartDateInput, addTaskDeadlineInput);
+    addTaskValidation.taskDeadline = addTaskValidation.taskStartDate
+    submitValidation(addTaskValidation, submitAddTask);
+})
+
+addTaskDeadlineInput.addEventListener('input', () => {
+    addTaskValidation.taskDeadline = validateTaskDates(addTaskStartDateInput, addTaskDeadlineInput);
+    addTaskValidation.taskStartDate = addTaskValidation.taskDeadline;
+    submitValidation(addTaskValidation, submitAddTask);
+})
+
+document.getElementById("taskStatus").addEventListener('input', (e) => {
+    addTaskValidation.taskStatus = validateTaskStatus(e.target);
+    submitValidation(addTaskValidation, submitAddTask);
+})
+
+document.getElementById("taskDescription").addEventListener('input', (e) => {
+    addTaskValidation.taskDescription = validateTextInput(e.target);
+    submitValidation(addTaskValidation, submitAddTask);
+})
+
+const editTaskModal = document.getElementById('editTaskModal');
+const closeEditModal = document.getElementById('closeEditModal');
+const editTaskForm = document.getElementById('editTaskForm');
+
+let currentEditTaskId = null;
+let currentEditTaskStatus = null;
+
+function openEditTaskModal(task) {
+    currentEditTaskId = task.id;
+    currentEditTaskStatus = task.status;
+
+    document.getElementById('editTaskName').value = task.name;
+    document.getElementById('editTaskDescription').value = task.description;
+    document.getElementById('editTaskStartDate').value = task.start_date;
+    document.getElementById('editTaskDeadline').value = task.deadline;
+
+    editTaskModal.style.display = 'block';
+}
+
+closeEditModal.addEventListener('click', () => {
+    editTaskModal.style.display = 'none';
+});
+
+
+editTaskForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+
+    const task = {
+        name: data.get("name"),
+        description: data.get("description"),
+        startDate: data.get("startDate"),
+        deadline: data.get("deadline"),
+        status: currentEditTaskStatus
+    }
+
+    updateTask(currentEditTaskId, task)
+    editTaskModal.style.display = 'none';
+});
+
+async function updateTask(id, task) {
+    const result = await window.electronAPI.updateTask(id, task);
+    if (!result.success) {
+        console.error('Ошибка при обновлении задачи:', result.error);
+    } else {
+        console.log('Задача успешно обновлена');
+    }
+
+    renderTasks();
+}
+
+const editTaskValidation = {
+    taskName: true,
+    taskStartDate: true,
+    taskDeadline: true,
+    taslDescription: true
+}
+
+const submitEditTask = document.getElementById("editTaskSubmit")
+
+document.getElementById("editTaskName").addEventListener('input', (e) => {
+    editTaskValidation.taskName = validateTextInput(e.target);
+    submitValidation(editTaskValidation, submitEditTask);
+})
+
+const editTaskStartDateInput = document.getElementById("editTaskStartDate");
+const editTaskDeadlineInput = document.getElementById("editTaskDeadline");
+
+editTaskStartDateInput.addEventListener('input', () => {
+    editTaskValidation.taskStartDate = validateTaskDates(editTaskStartDateInput, editTaskDeadlineInput);
+    editTaskValidation.taskDeadline = editTaskValidation.taskStartDate
+    submitValidation(editTaskValidation, submitEditTask);
+})
+
+editTaskDeadlineInput.addEventListener('input', () => {
+    editTaskValidation.taskDeadline = validateTaskDates(editTaskStartDateInput, editTaskDeadlineInput);
+    editTaskValidation.taskStartDate = editTaskValidation.taskDeadline;
+    submitValidation(editTaskValidation, submitEditTask);
+})
+
+document.getElementById("editTaskDescription").addEventListener('input', (e) => {
+    editTaskValidation.taskName = validateTextInput(e.target);
+    submitValidation(editTaskValidation, submitEditTask);
+})
+
+changeUsername();
 renderTasks();

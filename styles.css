@@ -318,6 +318,19 @@ label {
     color: var(--text-primary);
 }
 
+.error {
+    border-color: #DD0002
+}
+
+.valid {
+    border-color: #20B602
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 input,
 textarea,
 select {

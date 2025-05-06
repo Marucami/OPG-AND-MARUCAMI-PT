@@ -43,7 +43,7 @@
 
     <div id="taskModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" id="closeModal">&times;</span>
             <h2>Create Task</h2>
             <form id="taskForm">
                 <label for="taskName">Task Name:</label>
@@ -52,16 +52,17 @@
                 <div class="date-row">
                     <div class="date-field">
                         <label for="taskStartDate">Start Date:</label>
-                        <input type="date" id="taskStartDate" name="taskStartDate" required>
+                        <input type="date" min="1900-01-01" max="2100-12-31" id="taskStartDate" name="taskStartDate" required>
                     </div>
                     <div class="date-field">
                         <label for="taskDeadline">Deadline:</label>
-                        <input type="date" id="taskDeadline" name="taskDeadline" required>
+                        <input type="date" min="1900-01-01" max="2100-12-31" id="taskDeadline" name="taskDeadline" required>
                     </div>
                 </div>
 
                 <label for="taskStatus">Status:</label>
                 <select id="taskStatus" name="taskStatus" required>
+                    <option value="none">Choose Status</option>
                     <option value="draft">Draft</option>
                     <option value="in-progress">In Progress</option>
                     <option value="editing">Editing</option>
@@ -71,27 +72,28 @@
                 <label for="taskDescription">Task Description:</label>
                 <textarea id="taskDescription" name="taskDescription" rows="5" required></textarea>
 
-                <button type="submit" class="btn">Create Task</button>
+                <button type="submit" id="taskSubmit" class="btn" disabled>Create Task</button>
             </form>
         </div>
     </div>
     <div id="editTaskModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeEditModal">&times;</span>
+            <h2>Edit Task</h2>
             <form id="editTaskForm">
-                <label for="editTaskName">Название:</label>
+                <label for="editTaskName">Edit Name:</label>
                 <input type="text" id="editTaskName" name="name" required>
 
-                <label for="editTaskStartDate">Дата начала:</label>
-                <input type="date" id="editTaskStartDate" name="startDate" required>
+                <label for="editTaskStartDate">Edit Start Date:</label>
+                <input type="date" min="1900-01-01" max="2100-12-31" id="editTaskStartDate" name="startDate" required>
 
-                <label for="editTaskDeadline">Срок:</label>
-                <input type="date" id="editTaskDeadline" name="deadline" required>
+                <label for="editTaskDeadline">Edit Deadline:</label>
+                <input type="date" min="1900-01-01" max="2100-12-31" id="editTaskDeadline" name="deadline" required>
 
-                <label for="editTaskDescription">Описание:</label>
+                <label for="editTaskDescription">Edit Description:</label>
                 <textarea id="editTaskDescription" name="description" required></textarea>
 
-                <button type="submit" class="btn">Сохранить</button>
+                <button type="submit" id="editTaskSubmit" class="btn">Save Changes</button>
             </form>
         </div>
     </div>
