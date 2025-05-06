@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron"
 import { fileURLToPath } from 'url';
 import path from "path"
-import db from "./database.js";
+import { db, getDbPath } from "./database.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +70,7 @@ function setupDatabaseHandlers() {
 
 app.whenReady().then(() => {
   setupDatabaseHandlers();
+  console.log('DB path:', getDbPath());
   createWindow()
 })
 
