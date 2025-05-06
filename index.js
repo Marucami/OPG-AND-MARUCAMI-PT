@@ -155,33 +155,56 @@ function renderTask(task, status) {
 }
 
 async function editTask(id, status) {
-    const task = tasks[status].find(t => t.id === id);
-    if (!task) return;
-    const { value: formValues } = await dialog.showMessageBox({
-        type: 'question',
-        buttons: ['Save', 'Cancel'],
-        title: 'Edit Task',
-        message: 'Edit task details:',
-        detail: 'Enter the new task information:',
-        inputs: [
-            { label: 'Name', value: task.name },
-            { label: 'Description', value: task.description },
-            { label: 'Start Date', value: task.startDate },
-            { label: 'Deadline', value: task.deadline }
-        ],
-        cancelId: 1
-    });
+    // const task = tasks[status].find(t => t.id === id);
+    // if (!task) return;
+    // const { value: formValues } = await dialog.showMessageBox({
+    //     type: 'question',
+    //     buttons: ['Save', 'Cancel'],
+    //     title: 'Edit Task',
+    //     message: 'Edit task details:',
+    //     detail: 'Enter the new task information:',
+    //     inputs: [
+    //         { label: 'Name', value: task.name },
+    //         { label: 'Description', value: task.description },
+    //         { label: 'Start Date', value: task.startDate },
+    //         { label: 'Deadline', value: task.deadline }
+    //     ],
+    //     cancelId: 1
+    // });
 
-    if (formValues !== undefined) {
-        const [newName, newDescription, newStartDate, newDeadline] = formValues;
-        if (newName && newDescription && newStartDate && newDeadline) {
-            task.name = newName.trim();
-            task.description = newDescription.trim();
-            task.startDate = newStartDate.trim();
-            task.deadline = newDeadline.trim();
-            renderTasks();
-        }
+    // if (formValues !== undefined) {
+    //     const [newName, newDescription, newStartDate, newDeadline] = formValues;
+    //     if (newName && newDescription && newStartDate && newDeadline) {
+    //         task.name = newName.trim();
+    //         task.description = newDescription.trim();
+    //         task.startDate = newStartDate.trim();
+    //         task.deadline = newDeadline.trim();
+    //         renderTasks();
+    //     }
+    // }
+
+    const name = 'edited name';
+    const description = 'edited description'
+    const startDate = '1998-01-01'
+    const deadline = '2026-01-01'
+    
+
+    const task = {
+        name: name,
+        description: description,
+        startDate: startDate,
+        deadline: deadline,
+        status: status
+    };
+
+    const result = await window.electronAPI.updateTask(id, task);
+    if (!result.success) {
+        console.error('Ошибка', result.error);
+    } else {
+        console.log('Успешно обновлено')
     }
+
+    renderTasks();
 }
 
 async function deleteTask(id) {
