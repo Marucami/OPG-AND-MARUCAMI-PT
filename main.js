@@ -66,6 +66,25 @@ function setupDatabaseHandlers() {
       });
     });
   });
+  ipcMain.handle('update-task-status', async (_, { id, newStatus }) => {
+    return new Promise((resolve) => {
+      db.run(
+        "UPDATE tasks SET status = ? WHERE id = ?",
+        [newStatus, id],
+        function(err) {
+          if (err) {
+            resolve({ success: false, error: err.message });
+          } else {
+            resolve({ 
+              success: true,
+              updated: this.changes > 0,
+              changes: this.changes
+            });
+          }
+        }
+      );
+    });
+  });
 }
 
 app.whenReady().then(() => {

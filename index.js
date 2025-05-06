@@ -116,7 +116,7 @@ function renderTask(task, status) {
         backButton.classList.add('btn');
         backButton.addEventListener('click', (e) => {
             e.preventDefault();
-            moveTask(task.id, status, 'in-progress');
+            moveTask(task.id, 'in-progress');
         });
         taskActions.append(backButton);
     }
@@ -129,21 +129,21 @@ function renderTask(task, status) {
                 moveTaskButton.innerText = 'In Progress';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'in-progress');
+                    moveTask(task.id, 'in-progress');
                 });
                 break;
             case 'in-progress':
                 moveTaskButton.innerText = 'Editing';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'editing');
+                    moveTask(task.id,'editing');
                 });
                 break;
             case 'editing':
                 moveTaskButton.innerText = 'Done';
                 moveTaskButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    moveTask(task.id, status, 'done');
+                    moveTask(task.id, 'done');
                 });
                 break;
         }
@@ -185,19 +185,13 @@ async function editTask(id, status) {
 }
 
 async function deleteTask(id) {
-    window.electronAPI.deleteTask(id);
+    await window.electronAPI.deleteTask(id);
     renderTasks();
 }
 
-function moveTask(id, fromStatus, toStatus) {
-    const index = tasks[fromStatus].findIndex(t => t.id === id);
-    if (index !== -1) {
-        const taskToMove = tasks[fromStatus][index];
-        tasks[fromStatus].splice(index, 1);
-        taskToMove.status = toStatus;
-        tasks[toStatus].push(taskToMove);
-        renderTasks();
-    }
+async function moveTask(id, status) {
+    await window.electronAPI.updateTaskStatus(id, status);
+    renderTasks();
 }
 
 window.openModal = function () {
