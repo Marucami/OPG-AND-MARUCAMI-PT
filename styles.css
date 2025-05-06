@@ -1,175 +1,213 @@
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-light: #818cf8;
+    --background: #0f172a;
+    --surface: #1e293b;
+    --surface-light: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --draft: #f97316;
+    --in-progress: #0ea5e9;
+    --editing: #a855f7;
+    --done: #10b981;
+}
+
+main {
+    width: 100%;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #121212;
-    color: #e0e0e0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .container {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    max-width: 1400px;
-    height: 90vh;
-    background-color: #1e1e1e;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 95%;
+    max-width: 1800px;
+    height: 95vh;
+    background-color: var(--surface);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-}
-
-.task-container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 20px;
 }
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    background-color: #2c2c2c;
-    border-bottom: 1px solid #444;
+    padding: 16px 24px;
+    background-color: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 header h1 {
     margin: 0;
-    font-size: 1.5em;
-    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+header h1 svg {
+    width: 24px;
+    height: 24px;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    margin-left: auto;
+    gap: 12px;
 }
 
 .user-info .username {
-    margin-right: 10px;
-    color: #ffffff;
-    font-size: 1.2em;
+    color: var(--text-primary);
+    font-weight: 500;
 }
 
-.user-info img {
+.user-info .avatar {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
 }
 
-main {
+.task-container {
     display: flex;
     flex: 1;
     padding: 20px;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .task-board {
     display: flex;
-    flex: 1;
-    gap: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 24px;
+    padding-bottom: 16px;
+    justify-content: space-between;
 }
 
 .task-column {
-    flex: 1;
-    background-color: #3a3a3a;
+    flex: 1 1 auto;
+    min-width: 200px;
+    max-width: 100%;
+    background-color: var(--surface-light);
     border-radius: 12px;
-    padding: 20px;
-    min-width: 250px;
-    min-height: 400px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
-#draft {
-    background-color: #4a4a4a;
-    border: 2px solid #ff6f61;
-}
-
-#in-progress {
-    background-color: #4a4a4a;
-    border: 2px solid #6a5acd;
-}
-
-#editing {
-    background-color: #4a4a4a;
-    border: 2px solid #6b8e23;
-}
-
-#done {
-    background-color: #4a4a4a;
-    border: 2px solid #32cd32;
+.task-column:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .task-column h2 {
-    margin: 0;
-    font-size: 1.2em;
-    color: #ffffff;
-    text-align: center;
-    border-bottom: 2px solid #ffffff;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.task-column#draft h2 {
+    color: var(--draft);
+}
+
+.task-column#in-progress h2 {
+    color: var(--in-progress);
+}
+
+.task-column#editing h2 {
+    color: var(--editing);
+}
+
+.task-column#done h2 {
+    color: var(--done);
 }
 
 .task-list {
-    margin-top: 20px;
+    flex: 1;
+    overflow-y: auto;
+    margin-right: -8px;
+    padding-right: 8px;
 }
 
 .task {
-    background-color: #5a5a5a;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
+    background-color: var(--surface);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
     display: flex;
     flex-direction: column;
-    min-height: 120px;
+    gap: 8px;
     position: relative;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s;
+    transition: all 0.2s ease;
+    border-left: 4px solid var(--primary);
 }
 
 .task:hover {
-    background-color: #6a6a6a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .task-name {
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 1.2em;
-    color: #e0e0e0;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
 }
 
 .task-description {
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 1em;
-    color: #e0e0e0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.task-start-date {
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 0.9em;
-    color: #e0e0e0;
-}
-
-.task-deadline {
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 0.9em;
-    color: #e0e0e0;
+.task-dates {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
 }
 
 .task-actions {
     display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    margin-top: 10px;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .task:hover .task-actions {
@@ -178,85 +216,155 @@ main {
 
 .btn {
     cursor: pointer;
-    background-color: #007bff;
+    background-color: var(--primary);
     border: none;
     color: white;
-    padding: 10px 20px;
-
+    padding: 8px 16px;
     border-radius: 8px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1em;
-    transition: background-color 0.3s, transform 0.3s;
-    width: 150px;
-
-    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .btn:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
-.task button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+.btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+#addTask {
+    align-self: center;
+    margin-top: auto;
     width: 150px;
-    text-align: center;
+    margin-top: auto;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.task button:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-}
-
-#draft h2,
-#in-progress h2,
-#editing h2,
-#done h2 {
-    text-align: center;
-    border-bottom: solid 3px white;
-    padding-bottom: 20px;
+#addTask:hover {
+    background-color: var(--primary-dark);
 }
 
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 100;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 60px;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    border-radius: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--surface);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease;
 }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+.close:hover {
+    color: var(--text-primary);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--surface-light);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+#taskName,
+#taskDescription {
+    width: 475px;
+}
+
+#taskStartDate,
+#taskDeadline {
+    width: 140px;
+}
+
+.date-row {
+    display: flex;
+    gap: 16px;
+}
+
+.date-field {
+    flex: 1;
+}
+
+@media (max-width: 1400px) {
+    .task-column {
+        flex: 1 1 45%;
+    }
+}
+
+@media (max-width: 900px) {
+    .task-column {
+        flex: 1 1 100%;
+    }
 }

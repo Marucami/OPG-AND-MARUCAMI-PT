@@ -11,7 +11,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>Task Management</h1>
+            <h1>Task Manager</h1>
             <div class="user-info">
                 <span class="username">Username</span>
             </div>
@@ -48,12 +48,18 @@
             <form id="taskForm">
                 <label for="taskName">Task Name:</label>
                 <input type="text" id="taskName" name="taskName" required>
-                <label for="taskDescription">Task Description:</label>
-                <input type="text" id="taskDescription" name="taskDescription" required>
-                <label for="taskStartDate">Start Date:</label>
-                <input type="date" id="taskStartDate" name="taskStartDate" required>
-                <label for="taskDeadline">Deadline:</label>
-                <input type="date" id="taskDeadline" name="taskDeadline" required>
+
+                <div class="date-row">
+                    <div class="date-field">
+                        <label for="taskStartDate">Start Date:</label>
+                        <input type="date" id="taskStartDate" name="taskStartDate" required>
+                    </div>
+                    <div class="date-field">
+                        <label for="taskDeadline">Deadline:</label>
+                        <input type="date" id="taskDeadline" name="taskDeadline" required>
+                    </div>
+                </div>
+
                 <label for="taskStatus">Status:</label>
                 <select id="taskStatus" name="taskStatus" required>
                     <option value="draft">Draft</option>
@@ -61,6 +67,10 @@
                     <option value="editing">Editing</option>
                     <option value="done">Done</option>
                 </select>
+
+                <label for="taskDescription">Task Description:</label>
+                <textarea id="taskDescription" name="taskDescription" rows="5" required></textarea>
+
                 <button type="submit" class="btn">Create Task</button>
             </form>
         </div>
