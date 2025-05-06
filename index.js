@@ -2,7 +2,6 @@
 // import updateTaskDB from "./updateTask.js";
 // import changeStatusDB from "./changeStatus.js";
 // import deleteTaskDB from "./deleteTask.js";
-import dialog from "electron";
 
 const tasks = {
     draft: [],
@@ -151,27 +150,14 @@ function renderTask(task, status) {
     document.getElementById(`${status}-tasks`).appendChild(taskElement);
 }
 
-async function editTask(id, status) {
+function editTask(id, status) {
     const task = tasks[status].find(t => t.id === id);
-    if (!task) return;
-    const { value: formValues } = await dialog.showMessageBox({
-        type: 'question',
-        buttons: ['Save', 'Cancel'],
-        title: 'Edit Task',
-        message: 'Edit task details:',
-        detail: 'Enter the new task information:',
-        inputs: [
-            { label: 'Name', value: task.name },
-            { label: 'Description', value: task.description },
-            { label: 'Start Date', value: task.startDate },
-            { label: 'Deadline', value: task.deadline }
-        ],
-        cancelId: 1
-    });
-
-    if (formValues !== undefined) {
-        const [newName, newDescription, newStartDate, newDeadline] = formValues;
-        if (newName && newDescription && newStartDate && newDeadline) {
+    if (task) {
+        const newName = prompt('Edit task name:', task.name);
+        const newDescription = prompt('Edit task description:', task.description);
+        const newStartDate = prompt('Edit start date:', task.startDate);
+        const newDeadline = prompt('Edit deadline:', task.deadline);
+        if (newName !== null && newDescription !== null && newStartDate !== null && newDeadline !== null) {
             task.name = newName.trim();
             task.description = newDescription.trim();
             task.startDate = newStartDate.trim();
@@ -197,13 +183,13 @@ function moveTask(id, fromStatus, toStatus) {
     }
 }
 
-window.openModal = function () {
+function openModal() {
     document.getElementById('taskModal').style.display = 'block';
-};
+}
 
-window.closeModal = function () {
+function closeModal() {
     document.getElementById('taskModal').style.display = 'none';
-};
+}
 
 document.getElementById('addTask').addEventListener('click', openModal);
 
