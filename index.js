@@ -1,3 +1,8 @@
+// import addTaskDB from "./addTask.js";
+// import updateTaskDB from "./updateTask.js";
+// import changeStatusDB from "./changeStatus.js";
+// import deleteTaskDB from "./deleteTask.js";
+
 const tasks = {
     draft: [],
     'in-progress': [],
@@ -5,24 +10,53 @@ const tasks = {
     done: []
 };
 
-function addTask(status, name, description, startDate, deadline) {
+async function getTasks() {
+    const { success, newTasks, error } = await window.electronAPI.getTasks();
+    if (!success) {
+        console.error('Ошибка при загрузке задач:', error);
+        return {};
+    }
+
+    console.log(newTasks);
+
+    tasks.draft = [];
+    tasks['in-progress'] = [];
+    tasks.editing = [];
+    tasks.done = [];
+
+    newTasks.forEach((task) => {
+        tasks[task.status].push(task);
+    })
+    console.log(tasks);
+}
+
+async function addTask(status, name, description, startDate, deadline) {
     if (name) {
         const task = {
-            id: Date.now(),
             name: name,
             description: description,
             startDate: startDate,
             deadline: deadline,
             status: status
         };
-        tasks[status].push(task);
+        const result = await window.electronAPI.addTask(task);
+        if (result.success) {
+            console.log(`Задача добавлена с ID: ${result.id}`);
+            // loadTasks();
+        } else {
+            console.log(`Ошибка: ${result.error}`);
+            return false;
+        }
+        // tasks[status].push(task);
         renderTasks();
         return true;
     }
-    return false;
+
 }
 
-function renderTasks() {
+async function renderTasks() {
+    await getTasks();
+
     document.getElementById('draft-tasks').innerHTML = '';
     document.getElementById('in-progress-tasks').innerHTML = '';
     document.getElementById('editing-tasks').innerHTML = '';
@@ -35,6 +69,7 @@ function renderTasks() {
 }
 
 function renderTask(task, status) {
+    console.log('rendering task', task)
     const taskElement = document.createElement('div');
     taskElement.classList.add('task');
 
@@ -48,7 +83,7 @@ function renderTask(task, status) {
 
     const taskStartDate = document.createElement('p');
     taskStartDate.classList.add('task-start-date');
-    taskStartDate.innerText = `Start Date: ${task.startDate}`;
+    taskStartDate.innerText = `Start Date: ${task.start_date}`;
 
     const taskDeadline = document.createElement('p');
     taskDeadline.classList.add('task-deadline');
@@ -66,9 +101,9 @@ function renderTask(task, status) {
 
     const deleteTaskButton = document.createElement('button');
     deleteTaskButton.innerText = 'Delete';
-    deleteTaskButton.addEventListener('click', (e) => {
+    deleteTaskButton.addEventListener('click', async (e) => {
         e.preventDefault();
-        deleteTask(task.id, status);
+        await deleteTask(task.id);
     });
 
     taskActions.append(editTaskButton, deleteTaskButton);
@@ -132,12 +167,9 @@ function editTask(id, status) {
     }
 }
 
-function deleteTask(id, status) {
-    const index = tasks[status].findIndex(t => t.id === id);
-    if (index !== -1) {
-        tasks[status].splice(index, 1);
-        renderTasks();
-    }
+async function deleteTask(id) {
+    window.electronAPI.deleteTask(id);
+    renderTasks();
 }
 
 function moveTask(id, fromStatus, toStatus) {
