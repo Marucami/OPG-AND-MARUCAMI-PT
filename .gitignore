@@ -1,4 +1,6 @@
 tasks.db
+playwright-report/
+test-results/
 
 # Logs
 logs
