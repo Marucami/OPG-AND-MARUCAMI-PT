@@ -62,16 +62,13 @@ async function createTestTask(taskData = {}) {
   return await window.evaluate((t) => window.electronAPI.addTask(t), task);
 }
 
-// 1. Тесты для addTask() (уже были, оставляем для полноты)
 test('should add a task to the database', async () => {
   const result = await createTestTask();
   expect(result.success).toBe(true);
   expect(result.id).toBeDefined();
 });
 
-// 2. Тесты для getTasks()
 test('should retrieve all tasks from database', async () => {
-  // Сначала создаем тестовую задачу
   await createTestTask();
   
   const result = await window.evaluate(() => window.electronAPI.getTasks());
@@ -87,13 +84,10 @@ test('should retrieve all tasks from database', async () => {
   expect(task).toHaveProperty('status');
 });
 
-// 3. Тесты для deleteTask()
 test('should delete a task from database', async () => {
-  // Создаем задачу для удаления
   const creationResult = await createTestTask();
   const taskId = creationResult.id;
   
-  // Удаляем задачу
   const deletionResult = await window.evaluate((id) => 
     window.electronAPI.deleteTask(id), 
     taskId
@@ -102,7 +96,6 @@ test('should delete a task from database', async () => {
   expect(deletionResult.success).toBe(true);
   expect(deletionResult.deleted).toBe(true);
   
-  // Проверяем, что задача действительно удалена
   const tasksResult = await window.evaluate(() => window.electronAPI.getTasks());
   const taskExists = tasksResult.newTasks.some(t => t.id === taskId);
   expect(taskExists).toBe(false);
@@ -120,13 +113,10 @@ test('should handle attempt to delete non-existent task', async () => {
   expect(result.changes).toBe(0);
 });
 
-// 4. Тесты для updateTaskStatus()
 test('should update task status', async () => {
-  // Создаем задачу
   const creationResult = await createTestTask();
   const taskId = creationResult.id;
   
-  // Обновляем статус
   const newStatus = 'in-progress';
   const updateResult = await window.evaluate(({id, status}) => 
     window.electronAPI.updateTaskStatus(id, status), 
@@ -136,7 +126,6 @@ test('should update task status', async () => {
   expect(updateResult.success).toBe(true);
   expect(updateResult.updated).toBe(true);
   
-  // Проверяем обновление
   const tasksResult = await window.evaluate(() => window.electronAPI.getTasks());
   
   const updatedTask = tasksResult.newTasks.find(t => t.id === taskId);
@@ -156,13 +145,10 @@ test('should not update status for non-existent task', async () => {
   expect(result.changes).toBe(0);
 });
 
-// 5. Тесты для updateTask()
 test('should update task with all fields', async () => {
-  // Создаем задачу
   const creationResult = await createTestTask();
   const taskId = creationResult.id;
   
-  // Подготавливаем обновление
   const updates = {
     name: 'Updated Name',
     description: 'Updated Description',
@@ -179,7 +165,6 @@ test('should update task with all fields', async () => {
   expect(updateResult.success).toBe(true);
   expect(updateResult.updated).toBe(true);
   
-  // Проверяем обновление
   const tasksResult = await window.evaluate(() => window.electronAPI.getTasks());
   const updatedTask = tasksResult.newTasks.find(t => t.id === taskId);
   
@@ -191,15 +176,12 @@ test('should update task with all fields', async () => {
 });
 
 test('should partially update task fields', async () => {
-  // Создаем задачу
   const creationResult = await createTestTask();
   const taskId = creationResult.id;
   
-  // Получаем исходные данные задачи
   const initialTasks = await window.evaluate(() => window.electronAPI.getTasks());
   const initialTask = initialTasks.newTasks.find(t => t.id === taskId);
   
-  // Обновляем только имя и статус
   const updates = {
     name: 'Partially Updated Name',
     status: 'in-progress'
@@ -213,15 +195,12 @@ test('should partially update task fields', async () => {
   expect(updateResult.success).toBe(true);
   expect(updateResult.updated).toBe(true);
   
-  // Проверяем обновление
   const tasksResult = await window.evaluate(() => window.electronAPI.getTasks());
   const updatedTask = tasksResult.newTasks.find(t => t.id === taskId);
   
-  // Проверяем обновленные поля
   expect(updatedTask.name).toBe(updates.name);
   expect(updatedTask.status).toBe(updates.status);
   
-  // Проверяем, что остальные поля не изменились
   expect(updatedTask.description).toBe(initialTask.description);
   expect(updatedTask.start_date).toBe(initialTask.start_date);
   expect(updatedTask.deadline).toBe(initialTask.deadline);
