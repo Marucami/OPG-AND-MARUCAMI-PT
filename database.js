@@ -7,8 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function getDbPath() {
-  if (process.env.NODE_ENV === 'development') {
-    return path.join(process.cwd(), 'tasks.db');
+  if (process.env.NODE_ENV === 'test') {
+    return path.join(process.cwd(), 'tasks-test.db');
   }
   return path.join(app.getPath('userData'), 'tasks.db');
 }
