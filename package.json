@@ -9,6 +9,7 @@
     "test": "cross-env NODE_ENV=test playwright test",
     "test:ui": "cross-env NODE_ENV=test playwright test --ui",
     "test:report": "cross-env NODE_ENV=test playwright test --reporter=html",
+    "test:ci": "cross-env NODE_ENV=test playwright test --workers=1 --reporter=dot,github",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
