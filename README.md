@@ -30,3 +30,7 @@ npm run start
 ```bash
 npm run make
 ```
+5. Для запуска тестов 
+```bash
+npm test
+```
