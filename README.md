@@ -1,4 +1,6 @@
-# OPGM Task Manager
+# <img src="https://raw.githubusercontent.com/Marucami/OPG-AND-MARUCAMI-PT/refs/heads/main/icons/linux/icon.png" alt="drawing" width="30"/> OPGM Task Manager
+
+
 Состав команды:
 
 1. Самоцкий Тимофей - Tech Lead/Frontend/Design Developer
